@@ -61,5 +61,5 @@ void impresionPlatoMap( Map< String, Map< String, String > > object ) {
     print( element ),
     print( object[element]['description'] ),
     print( object[element]['proportion'] )
-  });
+  }); 
 }
