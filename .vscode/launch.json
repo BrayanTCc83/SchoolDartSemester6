@@ -7,7 +7,8 @@
         {
             "name": "dart_project",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "program": "bin/dart_project.dart"
         }
     ]
 }
