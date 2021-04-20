@@ -1,3 +1,4 @@
+import 'dart:convert';
 //Declaration of receipt class, methods and properties
 class Receipt {
   String emmiter;
@@ -8,14 +9,14 @@ class Receipt {
   double amount;
 
   //Class constructor
-  Receipt ( String emmiter, String socialReason, String rfc, String description, int sessionNumber, double amount ) {
-    this.emmiter = emmiter;
-    this.socialReason = socialReason;
-    this.rfc = rfc;
-    this.description = description;
-    this.sessionNumber = sessionNumber;
-    this.amount = amount;
-  }
+  Receipt (
+    this.emmiter,
+    this.socialReason,
+    this.rfc,
+    this.description,
+    this.sessionNumber,
+    this.amount
+  );
 
   //Calculate IVA method, receive an object instance of receipt class
   double calculateIVA ( Receipt receipt ) {
@@ -53,5 +54,38 @@ class Receipt {
     double totalAmount;
     totalAmount = receipt.amount + calculateIVA(receipt) + calculateISR(receipt);
     return totalAmount;
+  }
+
+  //Constructor for JSON
+  Receipt.fromReceipt ( String data ){
+    var jsonData = json.decode(data);
+    emmiter = jsonData[ 'emmiter' ];
+    socialReason = jsonData[ 'socialReason' ];
+    rfc = jsonData[ 'rfc' ];
+    description = jsonData[ 'description' ];
+    sessionNumber = jsonData[ 'sessionNumber' ];
+    amount = (jsonData[ 'amount' ]).toDouble();
+  }
+
+  //Overriding to string
+  @override
+  String toString(){
+    var objData = '"emmiter":"$emmiter", '
+      '"socialReason":"$socialReason", '
+      '"rfc":"$rfc", '
+      '"description":"$description", '
+      '"sessionNumber":$sessionNumber, '
+      '"amount":$amount';
+    return objData;
+  }
+
+  //Parsing object to Json
+  Map< String, dynamic > parseJSON ( Receipt receipt ){
+    Map< String, dynamic > jsonData = {};
+    List<dynamic> dataList = receipt.toString().replaceAll('"', '').replaceAll(':', ',').split(',');
+    for ( num i = 1; i <= dataList.length / 2 ; i++ ) {
+      jsonData.addAll( {'${dataList[i*2-2]}' : dataList[i*2-1]} );
+    }
+    return jsonData;
   }
 }
