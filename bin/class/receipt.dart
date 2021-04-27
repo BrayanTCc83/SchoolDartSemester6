@@ -1,71 +1,42 @@
 import 'dart:convert';
 //Declaration of receipt class, methods and properties
-class Receipt {
-  String emmiter;
+abstract class Receipt {
+  String _emmiter;
   String socialReason;
-  String rfc;
+  String _rfc;
   String description;
   int sessionNumber;
   double amount;
 
   //Class constructor
   Receipt (
-    this.emmiter,
+    emmiter,
     this.socialReason,
-    this.rfc,
+    rfc,
     this.description,
     this.sessionNumber,
     this.amount
-  );
-
-  //Calculate IVA method, receive an object instance of receipt class
-  double calculateIVA ( Receipt receipt ) {
-    double pay;
-    pay = receipt.amount + receipt.amount * 0.16;
-    return pay;
+  ){
+    _emmiter = emmiter;
+    _rfc = rfc;
   }
 
-  //Calculate ISR method, receive an object from receipt
-  double calculateISR ( Receipt receipt ) {
-    var amountLimits = [ 0, 1001, 2001, 3001, 4001, 5001 ];
-    var cuotes = [
-      { 'cuote' : 0,  'percentaje' : 0.02 },
-      { 'cuote' : 20, 'percentaje' : 0.04 },
-      { 'cuote' : 40, 'percentaje' : 0.06 },
-      { 'cuote' : 60, 'percentaje' : 0.08 },
-      { 'cuote' : 80, 'percentaje' : 0.1  },
-      { 'cuote' : 90, 'percentaje' : 0.12 }
-    ];
-    double isr;
-    for ( num i = 0; i < amountLimits.length - 1 ; i++ ) {
-      if( receipt.amount > amountLimits[ i ] && receipt.amount < amountLimits[ i+1 ] ){
-        isr = receipt.amount * cuotes[ i ][ 'percentaje' ] + cuotes[ i ][ 'cuote' ];
-        break;
-      } else if ( receipt.amount > amountLimits[ amountLimits.length -1 ] ) {
-        isr = receipt.amount * cuotes[ amountLimits.length - 1 ][ 'percentaje' ] + cuotes[ amountLimits.length - 1 ][ 'cuote' ];
-        break;
-      }
-    }
-    return isr;
+  //Setters and getters
+  set emmiter(String emmiter){
+    this._emmiter = emmiter;
+  }
+  String get emmiter {
+    return _emmiter;
+  }
+  set rfc(String rfc){
+    this._rfc = rfc;
+  }
+  String get rfc{
+    return _rfc;
   }
 
-  //Get total amount, must receive an receive object
-  double getTotalAmount ( Receipt receipt ) {
-    double totalAmount;
-    totalAmount = receipt.amount + calculateIVA(receipt) + calculateISR(receipt);
-    return totalAmount;
-  }
-
-  //Constructor for JSON
-  Receipt.fromReceipt ( String data ){
-    var jsonData = json.decode(data);
-    emmiter = jsonData[ 'emmiter' ];
-    socialReason = jsonData[ 'socialReason' ];
-    rfc = jsonData[ 'rfc' ];
-    description = jsonData[ 'description' ];
-    sessionNumber = jsonData[ 'sessionNumber' ];
-    amount = (jsonData[ 'amount' ]).toDouble();
-  }
+  //Abstract methods for implement
+  double getTotalAmount ( Receipt receipt );
 
   //Overriding to string
   @override
@@ -76,7 +47,7 @@ class Receipt {
       '"description":"$description", '
       '"sessionNumber":$sessionNumber, '
       '"amount":$amount';
-    return objData;
+    return objData; 
   }
 
   //Parsing object to Json
